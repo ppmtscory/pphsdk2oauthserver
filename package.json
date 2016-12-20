@@ -26,6 +26,7 @@
   },
   "homepage": "https://github.com/djMax/paypal-retail-node",
   "dependencies": {
+    "body-parser": "^1.15.2",
     "braintree": "^1.46.0",
     "express": "^4.12.3",
     "wreck": "^5.4.0"

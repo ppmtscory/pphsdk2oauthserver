@@ -2,7 +2,10 @@ var express = require('express'),
     app = express(),
     util = require('util'),
     paypal = require('./'),
-    braintree = require("braintree");
+    braintree = require("braintree"),
+    bodyParser = require('body-parser');
+
+var txtParser = bodyParser.text()
 
 var gateway = braintree.connect({
   environment: braintree.Environment.Sandbox,
@@ -18,7 +21,7 @@ app.get("/client_token", function (req, res) {
   });
 });
 
-app.post("/checkout", function (req, res) {
+app.post("/checkout", txtParser, function (req, res) {
   var nonceFromTheClient = req.body.payment_method_nonce;
   console.log('noncefromclient: %s', nonceFromTheClient);
   // Use payment method nonce here
