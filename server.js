@@ -16,6 +16,7 @@ var gateway = braintree.connect({
 });
 
 // **************  BT Stuffs  **************
+
 app.get("/client_token", function (req, res) {
   gateway.clientToken.generate({}, function (err, response) {
     res.send(response.clientToken);
@@ -28,7 +29,7 @@ app.post("/checkout", function (req, res) {
   // Use payment method nonce here
   gateway.transaction.sale({
       amount: "10.00",
-      paymentMethodNonce: nonceFromTheClient,
+      paymentMethodNonce: "fake-valid-visa-nonce",
       options: {
         submitForSettlement: true
       }
