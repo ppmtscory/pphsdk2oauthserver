@@ -1,7 +1,26 @@
 var express = require('express'),
     app = express(),
     util = require('util'),
-    paypal = require('./');
+    paypal = require('./'),
+    braintree = require("braintree");
+
+var gateway = braintree.connect({
+  environment: braintree.Environment.Sandbox,
+  merchantId: process.env.BT_MERCHANT_ID,
+  publicKey: process.env.BT_PUBLIC_KEY,
+  privateKey: process.env.BT_PRIVATE_KEY
+});
+
+// **************  BT Stuffs  **************
+app.get("/client_token", function (req, res) {
+  gateway.clientToken.generate({}, function (err, response) {
+    res.send(response.clientToken);
+  });
+});
+
+
+
+// **************  End BT Stuffs  **************
 
 /**
  * These are the variables we will look for in the environment, from "most important" to least
