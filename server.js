@@ -29,7 +29,7 @@ app.post("/checkout", function (req, res) {
   // Use payment method nonce here
   gateway.transaction.sale({
       amount: "10.00",
-      paymentMethodNonce: "fake-valid-visa-nonce",
+      paymentMethodNonce: nonceFromTheClient,
       options: {
         submitForSettlement: true
       }
