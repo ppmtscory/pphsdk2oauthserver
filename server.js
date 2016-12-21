@@ -17,6 +17,16 @@ var gateway = braintree.connect({
 
 // **************  BT Stuffs  **************
 
+var TRANSACTION_SUCCESS_STATUSES = [
+  braintree.Transaction.Status.Authorizing,
+  braintree.Transaction.Status.Authorized,
+  braintree.Transaction.Status.Settled,
+  braintree.Transaction.Status.Settling,
+  braintree.Transaction.Status.SettlementConfirmed,
+  braintree.Transaction.Status.SettlementPending,
+  braintree.Transaction.Status.SubmittedForSettlement
+];
+
 app.get("/client_token", function (req, res) {
   gateway.clientToken.generate({}, function (err, response) {
     res.send(response.clientToken);
@@ -44,6 +54,16 @@ app.post("/checkout", function (req, res) {
   });
 });
 
+app.get('/checkouts/:id', function (req, res) {
+  var result;
+  var transactionId = req.params.id;
+
+  gateway.transaction.find(transactionId, function (err, transaction) {
+    result = createResultObject(transaction);
+    res.render('checkouts/show', {transaction: transaction, result: result});
+  });
+});
+
 function formatErrors(errors) {
   var formattedErrors = '';
 
@@ -53,6 +73,27 @@ function formatErrors(errors) {
     }
   }
   return formattedErrors;
+}
+
+function createResultObject(transaction) {
+  var result;
+  var status = transaction.status;
+
+  if (TRANSACTION_SUCCESS_STATUSES.indexOf(status) !== -1) {
+    result = {
+      header: 'Sweet Success!',
+      icon: 'success',
+      message: 'Your test transaction has been successfully processed. See the Braintree API response and try again.'
+    };
+  } else {
+    result = {
+      header: 'Transaction Failed',
+      icon: 'fail',
+      message: 'Your test transaction has a status of ' + status + '. See the Braintree API response and try again.'
+    };
+  }
+
+  return result;
 }
 
 // **************  End BT Stuffs  **************
