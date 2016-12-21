@@ -34,8 +34,26 @@ app.post("/checkout", function (req, res) {
         submitForSettlement: true
       }
     }, function (err, result) {
+        if (result.success || result.transaction) {
+            res.redirect('checkouts/' + result.transaction.id);
+        } else {
+            transactionErrors = result.errors.deepErrors();
+            req.flash('error', {msg: formatErrors(transactionErrors)});
+            res.redirect('checkouts/new');
+        }
   });
 });
+
+function formatErrors(errors) {
+  var formattedErrors = '';
+
+  for (var i in errors) { 
+    if (errors.hasOwnProperty(i)) {
+      formattedErrors += 'Error: ' + errors[i].code + ': ' + errors[i].message + '\n';
+    }
+  }
+  return formattedErrors;
+}
 
 // **************  End BT Stuffs  **************
 
