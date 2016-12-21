@@ -60,7 +60,7 @@ app.get('/checkouts/:id', function (req, res) {
 
   gateway.transaction.find(transactionId, function (err, transaction) {
     result = createResultObject(transaction);
-    res.render('checkouts/show', {transaction: transaction, result: result});
+    res.send({transaction: transaction, result: result});
   });
 });
 
