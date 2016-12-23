@@ -49,7 +49,7 @@ app.post("/checkout", function (req, res) {
         } else {
             transactionErrors = result.errors.deepErrors();
             req.flash('error', {msg: formatErrors(transactionErrors)});
-            res.redirect('checkouts/new');
+            res.send(formatErrors(transactionErrors));
         }
   });
 });
