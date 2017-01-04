@@ -37,7 +37,7 @@ app.post("/checkout", function (req, res) {
   // var nonceFromTheClient = req.body.payment_method_nonce;
   // var pmtAmount = req.body.price;
   var flow = req.body.flow;
-  console.log('noncefromclient: %s', nonceFromTheClient);
+  console.log('noncefromclient: %s', req.body.payment_method_nonce);
   console.log('flow chosen: %s', flow);
 
   if(flow == "vault") {
