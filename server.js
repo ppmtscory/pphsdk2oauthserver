@@ -39,7 +39,8 @@ app.post("/checkout", function (req, res) {
   var flow = req.body.flow;
   console.log('noncefromclient: %s', req.body.payment_method_nonce);
   console.log('flow chosen: %s', flow);
-
+  // Even though it's set to store on success, that's only for the BT console as there's
+  // no actual DB hooked up to this at all (yet) for storing/retrieving
   if(flow == "vault") {
 	var saleRequest = {
 		amount: req.body.price,
@@ -50,7 +51,8 @@ app.post("/checkout", function (req, res) {
 			  customField: "btVaultCustomField",
 			  description: "BT Vault Transaction",
 			},
-			submitForSettlement: true
+			submitForSettlement: true,
+			storeInVaultOnSuccess: true
 		}
 	};
   } else if(flow == "checkout") {
