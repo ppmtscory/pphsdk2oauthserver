@@ -34,24 +34,48 @@ app.get("/client_token", function (req, res) {
 });
 
 app.post("/checkout", function (req, res) {
-  var nonceFromTheClient = req.body.payment_method_nonce;
-  var pmtAmount = req.body.price;
+  // var nonceFromTheClient = req.body.payment_method_nonce;
+  // var pmtAmount = req.body.price;
+  var flow = req.body.flow;
   console.log('noncefromclient: %s', nonceFromTheClient);
+  console.log('flow chosen: %s', flow);
+
+  if(flow == "vault") {
+	var saleRequest = {
+		amount: req.body.price,
+		paymentMethodNonce: req.body.payment_method_nonce,
+		orderId: 'btVault' + getRandomArbitrary(1,9999),
+		options: {
+			paypal: {
+			  customField: "btVaultCustomField",
+			  description: "BT Vault Transaction",
+			},
+			submitForSettlement: true
+		}
+	};
+  } else if(flow == "checkout") {
+  	var saleRequest = {
+	  amount: req.body.price,
+	  paymentMethodNonce: req.body.payment_method_nonce,
+	  orderId: 'btCheckout' + getRandomArbitrary(1,9999),
+	  options: {
+	    paypal: {
+	      customField: "btCheckoutCustomField",
+	      description: "BT Checkout Transaction",
+	    },
+	    submitForSettlement: true
+	  }
+	};
+  }
   // Use payment method nonce here
-  gateway.transaction.sale({
-      amount: pmtAmount,
-      paymentMethodNonce: nonceFromTheClient,
-      options: {
-        submitForSettlement: true
-      }
-    }, function (err, result) {
-        if (result.success || result.transaction) {
-            res.redirect('checkouts/' + result.transaction.id);
-        } else {
-            transactionErrors = result.errors.deepErrors();
-            req.flash('error', {msg: formatErrors(transactionErrors)});
-            res.send(formatErrors(transactionErrors));
-        }
+  gateway.transaction.sale(saleRequest, function (err, result) {
+    if (result.success || result.transaction) {
+        res.redirect('checkouts/' + result.transaction.id);
+    } else {
+        transactionErrors = result.errors.deepErrors();
+        req.flash('error', {msg: formatErrors(transactionErrors)});
+        res.send(formatErrors(transactionErrors));
+    }
   });
 });
 
@@ -95,6 +119,11 @@ function createResultObject(transaction) {
   }
 
   return result;
+}
+
+// Returns a random number between min (inclusive) and max (exclusive)
+function getRandomArbitrary(min, max) {
+  return Math.random() * (max - min) + min;
 }
 
 // **************  End BT Stuffs  **************
