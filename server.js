@@ -72,8 +72,10 @@ app.post("/checkout", function (req, res) {
   // Use payment method nonce here
   gateway.transaction.sale(saleRequest, function (err, result) {
     if (result.success || result.transaction) {
+        // TODO: Add code to send the BAID through to the response in the app
+        // if the vault flow is chosen.
         gateway.paymentMethod.find(result.transaction.paypal.token, function (err, paymentMethod) {
-            console.log('pmt method: %j', paymentMethod);
+          console.log('pmt method: %s', paymentMethod.billingAgreementId);
         });
         res.redirect('checkouts/' + result.transaction.id);
     } else {
