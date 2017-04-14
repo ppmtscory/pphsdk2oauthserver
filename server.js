@@ -72,7 +72,9 @@ app.post("/checkout", function (req, res) {
   // Use payment method nonce here
   gateway.transaction.sale(saleRequest, function (err, result) {
     if (result.success || result.transaction) {
-        console.log('token: %s', result.transaction.paypal.token);
+        gateway.paymentMethod.find(result.transaction.paypal.token, function (err, paymentMethod) {
+            console.log('pmt method: %j', paymentMethod);
+        });
         res.redirect('checkouts/' + result.transaction.id);
     } else {
         transactionErrors = result.errors.deepErrors();
