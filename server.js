@@ -72,6 +72,7 @@ app.post("/checkout", function (req, res) {
   // Use payment method nonce here
   gateway.transaction.sale(saleRequest, function (err, result) {
     if (result.success || result.transaction) {
+        console.log('sale response: %s', result);
         res.redirect('checkouts/' + result.transaction.id);
     } else {
         transactionErrors = result.errors.deepErrors();
