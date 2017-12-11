@@ -277,6 +277,8 @@ function decrypt(cipherText, password, cb) {
         // Verify the HMAC first
         var hashKey = crypto.createHash('sha512').update(key).digest('binary');
         var hmacgen = new Buffer(crypto.createHmac('sha512', hashKey).update(cipherText).digest('binary'), 'binary');
+        console.log("hmac: "+hmac.toString('base64'));
+        console.log("hmacgen: "+hmacgen.toString('base64'));
         if (hmacgen.toString('base64') !== hmac.toString('base64')) {
             cb(new Error('HMAC Mismatch!'), null);
             return;
